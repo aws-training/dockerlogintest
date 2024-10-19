@@ -1,24 +1,23 @@
 version: 0.2
 
 phases:
-    install:
-        runtime-versions:
-            nodejs: 10
-        commands:
-            - echo "installing something"
-    pre_build:
-        commands:
-            - echo "we are in the pre build phase"
-    build:
-        commands:
-            - echo "we are in the build block"
-            - echo "we will run some tests"
-            - grep -Fq "Congratulations" index.html
-    post_build:
-        commands:
-            - echo "we are in the post build phase"
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 864899837235.dkr.ecr.ap-south-1.amazonaws.com
+
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t training/mywebsiteforecs .
+      - docker tag training/mywebsiteforecs:latest 864899837235.dkr.ecr.ap-south-1.amazonaws.com/training/mywebsiteforecs:latest
+
+  post_build:
+    commands:
+      - echo Pushing the Docker image to ECR...
+      - docker push 864899837235.dkr.ecr.ap-south-1.amazonaws.com/training/mywebsiteforecs:latest
 
 artifacts:
   files:
     - '**/*'
-  name: webapp-artifacts  
+  name: webapp-artifacts-forecs
