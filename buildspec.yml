@@ -9,6 +9,7 @@ phases:
   build:
     commands:
       - echo Building the Docker image...
+      - cat ~/docker-password.txt | docker login --username ncnallan@gmail.com --password-stdin
       - docker build -t training/mywebsiteforecs .
       - docker tag training/mywebsiteforecs:latest 864899837235.dkr.ecr.ap-south-1.amazonaws.com/training/mywebsiteforecs:latest
 
